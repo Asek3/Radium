@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[39,)"
+license="All rights reserved"
+[[mods]]
+modId="radium"
+version="0.7.7b"
+displayName="Radium"
+logoFile="icon.png"
+description='''
+An unofficial fork of Litihum mod, maked to work on FML.
+'''
+credits="NanoLive, CaffeineMC"
+authors="NanoLive"
