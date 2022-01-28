@@ -57,6 +57,7 @@ public class LithiumConfig {
         this.addMixinRule("block.moving_block_shapes", true);
         this.addMixinRule("block.redstone_wire", true);
 
+        this.addMixinRule("cached_blockpos_iteration", true);
         this.addMixinRule("cached_hashcode", true);
 
         this.addMixinRule("chunk", true);

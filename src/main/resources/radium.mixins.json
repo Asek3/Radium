@@ -76,6 +76,7 @@
     "block.moving_block_shapes.PistonBlockEntityMixin",
     "block.moving_block_shapes.VoxelShapeMixin",
     "block.redstone_wire.RedstoneWireBlockMixin",
+	"cached_blockpos_iteration.BlockPosMixin",
     "cached_hashcode.BlockNeighborGroupMixin",
     "chunk.block_counting.AbstractBlockStateMixin",
     "chunk.block_counting.ChunkSectionMixin",
