@@ -1,6 +1,6 @@
 package me.jellysquid.mods.lithium.mixin.math.sine_lut;
 
-import me.jellysquid.mods.lithium.common.util.math.CompactSineLUT;
+import me.jellysquid.mods.lithium.common.util.math.RivensFullMath;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -13,7 +13,7 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static float sin(float f) {
-        return CompactSineLUT.sin(f);
+    	return RivensFullMath.sin(f);
     }
 
     /**
@@ -22,6 +22,6 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static float cos(float f) {
-        return CompactSineLUT.cos(f);
+    	return RivensFullMath.cos(f);
     }
 }
