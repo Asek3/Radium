@@ -3,7 +3,7 @@ loaderVersion="[39,)"
 license="All rights reserved"
 [[mods]]
 modId="radium"
-version="0.7.7e"
+version="0.7.7f"
 displayName="Radium"
 logoFile="icon.png"
 description='''
