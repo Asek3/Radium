@@ -17,7 +17,4 @@ public interface EntityTrackerSection {
 
     long[] getMovementTimestampArray();
 
-    void setPos(long chunkSectionPos);
-
-    long getPos();
 }
