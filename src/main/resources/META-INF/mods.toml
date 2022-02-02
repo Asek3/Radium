@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[39,)"
-license="All rights reserved"
+license="GPLv3"
 [[mods]]
 modId="radium"
 version="0.7.7f"
