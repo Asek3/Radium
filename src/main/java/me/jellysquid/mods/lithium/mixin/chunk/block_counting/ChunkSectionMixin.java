@@ -3,7 +3,7 @@ package me.jellysquid.mods.lithium.mixin.chunk.block_counting;
 import me.jellysquid.mods.lithium.common.block.BlockCountingSection;
 import me.jellysquid.mods.lithium.common.block.BlockStateFlagHolder;
 import me.jellysquid.mods.lithium.common.block.BlockStateFlags;
-import me.jellysquid.mods.lithium.common.block.IndexedBlockStatePredicate;
+import me.jellysquid.mods.lithium.common.block.TrackedBlockStatePredicate;
 import net.minecraft.block.BlockState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.world.chunk.ChunkSection;
@@ -33,7 +33,7 @@ public abstract class ChunkSectionMixin implements BlockCountingSection {
     private short[] countsByFlag = new short[BlockStateFlags.NUM_FLAGS];
 
     @Override
-    public boolean anyMatch(IndexedBlockStatePredicate indexedBlockStatePredicate) {
+    public boolean anyMatch(TrackedBlockStatePredicate indexedBlockStatePredicate) {
         return this.countsByFlag[indexedBlockStatePredicate.getIndex()] != (short) 0;
     }
 
