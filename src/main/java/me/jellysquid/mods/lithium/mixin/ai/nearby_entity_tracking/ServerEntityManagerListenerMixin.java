@@ -15,7 +15,6 @@ import net.minecraft.world.entity.EntityTrackingStatus;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -32,17 +31,15 @@ public class ServerEntityManagerListenerMixin<T extends EntityLike> {
     @Shadow
     private long sectionPos;
     
-    @Unique
-    private ServerEntityManager<T> manager;
+    @Final
+    @Shadow
+    ServerEntityManager<T> manager;
     
     private int notificationMask;
 
-    @SuppressWarnings("unchecked")
 	@Inject(method = "<init>", at = @At("RETURN"))
     private void init(ServerEntityManager<?> outer, T entityLike, long l, EntityTrackingSection<T> entityTrackingSection, CallbackInfo ci) {
         this.notificationMask = EntityTrackerEngine.getNotificationMask(this.entity.getClass());
-
-        this.manager = (ServerEntityManager<T>) outer;
         
         //Fix #284 Summoned inventory minecarts do not immediately notify hoppers of their presence when created using summon command
         this.notifyMovementListeners();

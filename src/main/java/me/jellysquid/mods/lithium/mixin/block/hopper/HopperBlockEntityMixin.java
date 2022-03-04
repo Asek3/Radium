@@ -42,7 +42,6 @@ import java.util.function.BooleanSupplier;
 
 import static net.minecraft.block.entity.HopperBlockEntity.getInputItemEntities;
 
-
 @Mixin(HopperBlockEntity.class)
 public abstract class HopperBlockEntityMixin extends BlockEntity implements Hopper, UpdateReceiver, LithiumInventory {
     private static final Inventory USE_ENTITY_INVENTORY = new SimpleInventory(0);
@@ -65,7 +64,7 @@ public abstract class HopperBlockEntityMixin extends BlockEntity implements Hopp
     private long lastTickTime;
 
     @Shadow
-    protected abstract void setCooldown(int cooldown);
+    protected abstract void setTransferCooldown(int cooldown);
 
     @Shadow
     private static native boolean canExtract(Inventory inv, ItemStack stack, int slot, Direction facing);
@@ -228,7 +227,6 @@ public abstract class HopperBlockEntityMixin extends BlockEntity implements Hopp
      *
      * @reason Adding the inventory caching into the static method using mixins seems to be unfeasible without temporarily storing state in static fields.
      */
-    @SuppressWarnings("JavadocReference")
     @Redirect(method = "insertAndExtract(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/HopperBlockEntity;Ljava/util/function/BooleanSupplier;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/HopperBlockEntity;ejectItems(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/HopperBlockEntity;)Z"))
     private static boolean lithiumInsert(World world, BlockPos pos, BlockState hopperState, HopperBlockEntity blockEntity, World world2, BlockPos pos2, BlockState state2, HopperBlockEntity blockentity2, BooleanSupplier booleanSupplier) {
         HopperBlockEntityMixin hopperBlockEntity = (HopperBlockEntityMixin) blockEntity.getInventoryAt(world, pos);
@@ -263,7 +261,7 @@ public abstract class HopperBlockEntityMixin extends BlockEntity implements Hopp
                             if (receivingHopper.lastTickTime >= hopperBlockEntity.lastTickTime) {
                                 k = 7;
                             }
-                            receivingHopper.setCooldown(k);
+                            receivingHopper.setTransferCooldown(k);
                         }
                         insertInventory.markDirty();
                         return true;

@@ -46,7 +46,7 @@ public abstract class ChunkSectionMixin implements BlockCountingSection {
     )
     private void initFlagCounters(PalettedContainer<BlockState> palettedContainer, PalettedContainer.Counter<BlockState> consumer) {
         palettedContainer.count((state, count) -> {
-            consumer.accept(state, count);
+            consumer.m_63144_(state, count);
 
             int flags = ((BlockStateFlagHolder) state).getAllFlags();
             int size = this.countsByFlag.length;

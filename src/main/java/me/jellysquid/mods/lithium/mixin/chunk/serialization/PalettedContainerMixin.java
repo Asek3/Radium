@@ -143,7 +143,7 @@ public abstract class PalettedContainerMixin<T> {
             T obj = this.data.palette().get(i);
 
             if (obj != null) {
-                consumer.accept(obj, counts[i]);
+                consumer.m_63144_(obj, counts[i]);
             }
         }
 
