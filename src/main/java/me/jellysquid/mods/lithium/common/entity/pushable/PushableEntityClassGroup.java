@@ -2,6 +2,7 @@ package me.jellysquid.mods.lithium.common.entity.pushable;
 
 import me.jellysquid.mods.lithium.common.entity.EntityClassGroup;
 import me.jellysquid.mods.lithium.common.reflection.ReflectionUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -33,8 +34,8 @@ public class PushableEntityClassGroup {
         CACHABLE_UNPUSHABILITY = new EntityClassGroup(
                 (Class<?> entityClass) -> {
                     if (LivingEntity.class.isAssignableFrom(entityClass) && !PlayerEntity.class.isAssignableFrom(entityClass)) {
-                        if (!ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, LivingEntity.class, remapped_isPushable)) {
-                            if (!ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, LivingEntity.class, remapped_isClimbing)) {
+                        if (!ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, LivingEntity.class, true, remapped_isPushable)) {
+                            if (!ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, LivingEntity.class, true, remapped_isClimbing)) {
                                 return true;
                             }
                         }
@@ -43,25 +44,19 @@ public class PushableEntityClassGroup {
                 });
         MAYBE_PUSHABLE = new EntityClassGroup(
                 (Class<?> entityClass) -> {
-                    if (EnderDragonEntity.class.isAssignableFrom(entityClass)) {
-                        return false;
+                    if (ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, true, remapped_isPushable)) {
+                        if (EnderDragonEntity.class.isAssignableFrom(entityClass)) {
+                            return false;
+                        }
+                        if (ArmorStandEntity.class.isAssignableFrom(entityClass)) {
+                            return ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, ArmorStandEntity.class, true, remapped_isPushable);
+                        }
+                        if (BatEntity.class.isAssignableFrom(entityClass)) {
+                            return ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, BatEntity.class, true, remapped_isPushable);
+                        }
+                        return true;
                     }
                     if (PlayerEntity.class.isAssignableFrom(entityClass)) {
-                        return true;
-                    }
-                    if (ArmorStandEntity.class.isAssignableFrom(entityClass)) {
-                        return ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, ArmorStandEntity.class, remapped_isPushable);
-                    }
-                    if (BatEntity.class.isAssignableFrom(entityClass)) {
-                        return ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, BatEntity.class, remapped_isPushable);
-                    }
-                    if (AbstractMinecartEntity.class.isAssignableFrom(entityClass)) {
-                        return true;
-                    }
-                    if (BoatEntity.class.isAssignableFrom(entityClass)) {
-                        return true;
-                    }
-                    if (LivingEntity.class.isAssignableFrom(entityClass)) {
                         return true;
                     }
                     return false;
