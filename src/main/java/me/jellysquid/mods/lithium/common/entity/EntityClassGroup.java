@@ -25,7 +25,7 @@ public class EntityClassGroup {
     static {
         String remapped_method_30949 = "m_7337_";
         MINECART_BOAT_LIKE_COLLISION = new EntityClassGroup(
-                (Class<?> entityClass) -> ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, remapped_method_30949, Entity.class));
+                (Class<?> entityClass) -> ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, true, remapped_method_30949, Entity.class));
 
         //sanity check: in case intermediary mappings changed, we fail
         if ((!MINECART_BOAT_LIKE_COLLISION.contains(MinecartEntity.class))) {
@@ -87,7 +87,7 @@ public class EntityClassGroup {
         static {
             String remapped_method_30948 = "m_5829_";
             BOAT_SHULKER_LIKE_COLLISION = new NoDragonClassGroup(
-                    (Class<?> entityClass) -> ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, remapped_method_30948));
+                    (Class<?> entityClass) -> ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, true, remapped_method_30948));
 
             if ((!BOAT_SHULKER_LIKE_COLLISION.contains(ShulkerEntity.class))) {
                 throw new AssertionError();
