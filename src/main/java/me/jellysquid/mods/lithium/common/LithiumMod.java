@@ -1,22 +1,13 @@
 package me.jellysquid.mods.lithium.common;
 
 import me.jellysquid.mods.lithium.common.config.LithiumConfig;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.fabricmc.api.ModInitializer;
 
-@Mod(LithiumMod.MODID)
-public class LithiumMod {
-	
-	public static final String MODID = "radium";
-	
+public class LithiumMod implements ModInitializer {
     public static LithiumConfig CONFIG;
 
-    public LithiumMod() {
-        MinecraftForge.EVENT_BUS.addListener(this::onInitialize);
-    }
-    
-    public void onInitialize(final FMLCommonSetupEvent event) {
+    @Override
+    public void onInitialize() {
         if (CONFIG == null) {
             throw new IllegalStateException("The mixin plugin did not initialize the config! Did it not load?");
         }

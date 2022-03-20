@@ -20,7 +20,7 @@ public abstract class ServerEntityManagerMixin<T extends EntityLike> {
     SectionedEntityCache<T> cache;
 
     @Inject(
-            method = "addEntityWithoutEvent(Lnet/minecraft/world/entity/EntityLike;Z)Z",
+            method = "addEntity(Lnet/minecraft/world/entity/EntityLike;Z)Z",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/EntityLike;setChangeListener(Lnet/minecraft/world/entity/EntityChangeListener;)V",

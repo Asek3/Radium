@@ -33,8 +33,8 @@ public abstract class ChunkSectionMixin implements BlockCountingSection {
     private short[] countsByFlag = new short[BlockStateFlags.NUM_FLAGS];
 
     @Override
-    public boolean anyMatch(TrackedBlockStatePredicate indexedBlockStatePredicate) {
-        return this.countsByFlag[indexedBlockStatePredicate.getIndex()] != (short) 0;
+    public boolean anyMatch(TrackedBlockStatePredicate trackedBlockStatePredicate) {
+        return this.countsByFlag[trackedBlockStatePredicate.getIndex()] != (short) 0;
     }
 
     @Redirect(
@@ -46,7 +46,7 @@ public abstract class ChunkSectionMixin implements BlockCountingSection {
     )
     private void initFlagCounters(PalettedContainer<BlockState> palettedContainer, PalettedContainer.Counter<BlockState> consumer) {
         palettedContainer.count((state, count) -> {
-            consumer.m_63144_(state, count);
+            consumer.accept(state, count);
 
             int flags = ((BlockStateFlagHolder) state).getAllFlags();
             int size = this.countsByFlag.length;

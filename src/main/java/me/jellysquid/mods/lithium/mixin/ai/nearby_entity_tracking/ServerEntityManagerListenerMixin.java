@@ -11,12 +11,12 @@ import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.entity.EntityLike;
 import net.minecraft.world.entity.EntityTrackingSection;
 import net.minecraft.world.entity.EntityTrackingStatus;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -28,29 +28,31 @@ public class ServerEntityManagerListenerMixin<T extends EntityLike> {
     @Final
     private T entity;
 
-    @Shadow
-    private long sectionPos;
-    
     @Final
+    @SuppressWarnings("ShadowTarget")
     @Shadow
     ServerEntityManager<T> manager;
-    
+
+    @Shadow
+    private long sectionPos;
+
     private int notificationMask;
 
-	@Inject(method = "<init>", at = @At("RETURN"))
+    @Inject(method = "<init>", at = @At("RETURN"))
     private void init(ServerEntityManager<?> outer, T entityLike, long l, EntityTrackingSection<T> entityTrackingSection, CallbackInfo ci) {
         this.notificationMask = EntityTrackerEngine.getNotificationMask(this.entity.getClass());
-        
+
         //Fix #284 Summoned inventory minecarts do not immediately notify hoppers of their presence when created using summon command
         this.notifyMovementListeners();
     }
 
-    @Inject(method = "updateEntityPosition()V", at = @At("RETURN"))
-    private void updateEntityTrackerEngine(CallbackInfo ca) {
+    @ModifyVariable(method = "updateEntityPosition()V", at = @At("RETURN"))
+    private long updateEntityTrackerEngine(long sectionPos) {
         this.notifyMovementListeners();
+        return sectionPos;
     }
 
-	@Inject(
+    @Inject(
             method = "updateEntityPosition()V",
             at = @At(
                     value = "INVOKE",
@@ -61,10 +63,11 @@ public class ServerEntityManagerListenerMixin<T extends EntityLike> {
     )
     private void onAddEntity(CallbackInfo ci, BlockPos blockPos, long newPos, EntityTrackingStatus entityTrackingStatus, EntityTrackingSection<T> entityTrackingSection) {
         NearbyEntityListenerMulti listener = ((NearbyEntityListenerProvider) this.entity).getListener();
-        if (listener != null) {
+        if (listener != null)
+        {
             //noinspection unchecked
             listener.forEachChunkInRangeChange(
-                    ((ServerEntityManagerAccessor<T>) manager).getCache(),
+                    ((ServerEntityManagerAccessor<T>) this.manager).getCache(),
                     ChunkSectionPos.from(this.sectionPos),
                     ChunkSectionPos.from(newPos)
             );
@@ -72,7 +75,7 @@ public class ServerEntityManagerListenerMixin<T extends EntityLike> {
         this.notifyMovementListeners();
     }
 
-	@Inject(
+    @Inject(
             method = "remove(Lnet/minecraft/entity/Entity$RemovalReason;)V",
             at = @At(
                     value = "HEAD"
@@ -83,7 +86,7 @@ public class ServerEntityManagerListenerMixin<T extends EntityLike> {
         if (listener != null) {
             //noinspection unchecked
             listener.forEachChunkInRangeChange(
-                    ((ServerEntityManagerAccessor<T>) manager).getCache(),
+                    ((ServerEntityManagerAccessor<T>) this.manager).getCache(),
                     ChunkSectionPos.from(this.sectionPos),
                     null
             );

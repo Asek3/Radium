@@ -28,7 +28,7 @@ public abstract class PalettedContainerMixin {
      */
 
     static {
-    	Palette.Factory idListFactory = ID_LIST;
+        Palette.Factory idListFactory = ID_LIST;
         BLOCK_STATE = new PalettedContainer.PaletteProvider(4) {
             public <A> PalettedContainer.DataProvider<A> createDataProvider(IndexedIterable<A> idList, int bits) {
                 return switch (bits) {

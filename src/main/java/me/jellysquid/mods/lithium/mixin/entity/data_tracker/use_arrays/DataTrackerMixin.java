@@ -73,7 +73,7 @@ public abstract class DataTrackerMixin {
      * @author JellySquid
      */
     @Overwrite
-    public <T> DataTracker.Entry<T> getEntry(TrackedData<T> data) {
+    private <T> DataTracker.Entry<T> getEntry(TrackedData<T> data) {
         this.lock.readLock().lock();
 
         try {

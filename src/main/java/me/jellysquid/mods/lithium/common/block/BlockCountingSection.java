@@ -1,5 +1,5 @@
 package me.jellysquid.mods.lithium.common.block;
 
 public interface BlockCountingSection {
-    boolean anyMatch(TrackedBlockStatePredicate indexedBlockStatePredicate);
+    boolean anyMatch(TrackedBlockStatePredicate trackedBlockStatePredicate);
 }

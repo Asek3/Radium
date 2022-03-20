@@ -3,7 +3,6 @@ package me.jellysquid.mods.lithium.mixin.alloc.chunk_ticking;
 import net.minecraft.server.world.ChunkHolder;
 import net.minecraft.server.world.ServerChunkManager;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -14,16 +13,14 @@ import java.util.function.BooleanSupplier;
 
 @Mixin(ServerChunkManager.class)
 public class ServerChunkManagerMixin {
-	
-	@Unique
-    private ArrayList<ChunkHolder> cachedChunkList = new ArrayList<>();
+    private final ArrayList<ChunkHolder> cachedChunkList = new ArrayList<>();
 
     @Redirect(
             method = "tickChunks()V",
             at = @At(
-                    remap = false,
                     value = "INVOKE",
-                    target = "Lcom/google/common/collect/Lists;newArrayListWithCapacity(I)Ljava/util/ArrayList;"
+                    target = "Lcom/google/common/collect/Lists;newArrayListWithCapacity(I)Ljava/util/ArrayList;",
+                    remap = false
             )
     )
     private ArrayList<ChunkHolder> redirectChunksListClone(int initialArraySize) {

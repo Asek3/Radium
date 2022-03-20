@@ -43,7 +43,7 @@ public abstract class EntityMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     public void tryShortcutFluidPushing(TagKey<Fluid> tag, double speed, CallbackInfoReturnable<Boolean> cir, Box box, int x1, int x2, int y1, int y2, int z1, int z2, double zero) {
-    	TrackedBlockStatePredicate blockStateFlag;
+        TrackedBlockStatePredicate blockStateFlag;
         if (tag == FluidTags.WATER) {
             blockStateFlag = BlockStateFlags.WATER;
         } else if (tag == FluidTags.LAVA) {
