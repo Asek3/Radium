@@ -12,6 +12,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.chunk.WorldChunk;
+import net.minecraftforge.event.ForgeEventFactory;
+
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -136,6 +138,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     }
 
     protected void startWatchingChunk(ServerPlayerEntity player, int x, int z) {
+    	ForgeEventFactory.fireChunkWatch(true, player, new ChunkPos(x, z), this.world);
         ChunkHolder holder = this.getChunkHolder(ChunkPos.toLong(x, z));
 
         if (holder != null) {
@@ -148,7 +151,9 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     }
 
     protected void stopWatchingChunk(ServerPlayerEntity player, int x, int z) {
-        player.sendUnloadChunkPacket(new ChunkPos(x, z));
+    	ChunkPos chunkPos = new ChunkPos(x, z);
+        ForgeEventFactory.fireChunkWatch(false, player, chunkPos, this.world);
+        player.sendUnloadChunkPacket(chunkPos);
     }
 
     @Shadow

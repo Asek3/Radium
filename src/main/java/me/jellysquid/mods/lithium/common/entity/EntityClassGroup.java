@@ -2,7 +2,6 @@ package me.jellysquid.mods.lithium.common.entity;
 
 import it.unimi.dsi.fastutil.objects.Reference2ByteOpenHashMap;
 import me.jellysquid.mods.lithium.common.reflection.ReflectionUtil;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
@@ -24,17 +23,17 @@ public class EntityClassGroup {
     public static final EntityClassGroup MINECART_BOAT_LIKE_COLLISION; //aka entities that will attempt to collide with all other entities when moving
 
     static {
-        String remapped_method_30949 = FabricLoader.getInstance().getMappingResolver().mapMethodName("intermediary", "net.minecraft.class_1297", "method_30949", "(Lnet/minecraft/class_1297;)Z");
+        String remapped_method_30949 = "m_7337_";
         MINECART_BOAT_LIKE_COLLISION = new EntityClassGroup(
-                (Class<?> entityClass) -> ReflectionUtil.hasMethodOverride(entityClass, Entity.class, true, remapped_method_30949, Entity.class));
+                (Class<?> entityClass) -> ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, true, remapped_method_30949, Entity.class));
 
         //sanity check: in case intermediary mappings changed, we fail
         if ((!MINECART_BOAT_LIKE_COLLISION.contains(MinecartEntity.class))) {
             throw new AssertionError();
         }
         if ((MINECART_BOAT_LIKE_COLLISION.contains(ShulkerEntity.class))) {
-            //should not throw an Error here, because another mod *could* add the method to ShulkerEntity. Wwarning when this sanity check fails.
-            Logger.getLogger("Lithium EntityClassGroup").warning("Either Lithium EntityClassGroup is broken or something else gave Shulkers the minecart-like collision behavior.");
+            //should not throw an Error here, because another mod *could* add the method to ShulkerEntity. Warning when this sanity check fails.
+            Logger.getLogger("Radium EntityClassGroup").warning("Either Radium EntityClassGroup is broken or something else gave Shulkers the minecart-like collision behavior.");
         }
         MINECART_BOAT_LIKE_COLLISION.clear();
     }
@@ -86,9 +85,9 @@ public class EntityClassGroup {
         public static final NoDragonClassGroup BOAT_SHULKER_LIKE_COLLISION; //aka entities that other entities will do block-like collisions with when moving
 
         static {
-            String remapped_method_30948 = FabricLoader.getInstance().getMappingResolver().mapMethodName("intermediary", "net.minecraft.class_1297", "method_30948", "()Z");
+            String remapped_method_30948 = "m_5829_";
             BOAT_SHULKER_LIKE_COLLISION = new NoDragonClassGroup(
-                    (Class<?> entityClass) -> ReflectionUtil.hasMethodOverride(entityClass, Entity.class, true, remapped_method_30948));
+                    (Class<?> entityClass) -> ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, true, remapped_method_30948));
 
             if ((!BOAT_SHULKER_LIKE_COLLISION.contains(ShulkerEntity.class))) {
                 throw new AssertionError();

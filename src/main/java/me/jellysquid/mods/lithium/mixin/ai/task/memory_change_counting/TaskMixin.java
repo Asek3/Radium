@@ -38,7 +38,7 @@ public class TaskMixin<E extends LivingEntity> {
      * @author 2No2Name
      */
     @Overwrite
-    private boolean hasRequiredMemoryState(E entity) {
+    public boolean hasRequiredMemoryState(E entity) {
         Brain<?> brain = entity.getBrain();
         long modCount = ((MemoryModificationCounter) brain).getModCount();
         if (this.cachedMemoryModCount == modCount) {

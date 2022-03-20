@@ -73,6 +73,9 @@ public class LithiumHashPalette<T> implements Palette<T> {
 
     @Override
     public boolean hasAny(Predicate<T> predicate) {
+    	if(predicate == null)
+    		return false;
+    	
         for (int i = 0; i < this.size; ++i) {
             if (predicate.test(this.entries[i])) {
                 return true;

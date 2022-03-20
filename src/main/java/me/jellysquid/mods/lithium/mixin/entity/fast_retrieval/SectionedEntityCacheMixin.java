@@ -25,7 +25,6 @@ public abstract class SectionedEntityCacheMixin<T extends EntityLike> {
      * @author 2No2Name
      * @reason avoid iterating through LongAVLTreeSet, possibly iterating over hundreds of irrelevant longs to save up to 8 hash set gets
      */
-    @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(
             method = "forEachInBox",
             at = @At(

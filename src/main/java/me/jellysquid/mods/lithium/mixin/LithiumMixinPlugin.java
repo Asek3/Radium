@@ -3,6 +3,8 @@ package me.jellysquid.mods.lithium.mixin;
 import me.jellysquid.mods.lithium.common.LithiumMod;
 import me.jellysquid.mods.lithium.common.config.LithiumConfig;
 import me.jellysquid.mods.lithium.common.config.Option;
+import net.minecraftforge.fml.loading.FMLLoader;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.tree.ClassNode;
@@ -16,19 +18,19 @@ import java.util.Set;
 public class LithiumMixinPlugin implements IMixinConfigPlugin {
     private static final String MIXIN_PACKAGE_ROOT = "me.jellysquid.mods.lithium.mixin.";
 
-    private final Logger logger = LogManager.getLogger("Lithium");
+    private final Logger logger = LogManager.getLogger("Radium");
 
     private LithiumConfig config;
 
     @Override
     public void onLoad(String mixinPackage) {
         try {
-            this.config = LithiumConfig.load(new File("./config/lithium.properties"));
+            this.config = LithiumConfig.load(new File("./config/radium.properties"));
         } catch (Exception e) {
             throw new RuntimeException("Could not load configuration file for Lithium", e);
         }
 
-        this.logger.info("Loaded configuration file for Lithium: {} options available, {} override(s) found",
+        this.logger.info("Loaded configuration file for Radium: {} options available, {} override(s) found",
                 this.config.getOptionCount(), this.config.getOptionOverrideCount());
 
         LithiumMod.CONFIG = this.config;
@@ -41,6 +43,9 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+    	if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.fast_init.PointOfInterestTypeMixin") && FMLLoader.getLoadingModList().getModFileById("morevillagers") != null)
+    		return false;
+    	
         if (!mixinClassName.startsWith(MIXIN_PACKAGE_ROOT)) {
             this.logger.error("Expected mixin '{}' to start with package root '{}', treating as foreign and " +
                     "disabling!", mixinClassName, MIXIN_PACKAGE_ROOT);

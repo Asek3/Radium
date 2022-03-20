@@ -15,6 +15,7 @@ public class PathNodeDefaults {
 
         // [VanillaCopy] LandPathNodeMaker#getNodeTypeFromNeighbors
         // Determine what kind of obstacle type this neighbor is
+        try {
         if (state.isOf(Blocks.CACTUS)) {
             return PathNodeType.DANGER_CACTUS;
         } else if (state.isOf(Blocks.SWEET_BERRY_BUSH)) {
@@ -23,9 +24,11 @@ public class PathNodeDefaults {
             return PathNodeType.DANGER_FIRE;
         } else if (state.getFluidState().isIn(FluidTags.WATER)) {
             return PathNodeType.WATER_BORDER;
-        } else {
-            return PathNodeType.OPEN;
         }
+        }catch(Exception e) {
+        	
+        }
+        return PathNodeType.OPEN;
     }
 
     public static PathNodeType getNodeType(BlockState state) {
@@ -36,6 +39,7 @@ public class PathNodeDefaults {
         Block block = state.getBlock();
         Material material = state.getMaterial();
 
+        try {
         if (state.isIn(BlockTags.TRAPDOORS) || state.isOf(Blocks.LILY_PAD) || state.isOf(Blocks.BIG_DRIPLEAF)) {
             return PathNodeType.TRAPDOOR;
         }
@@ -88,12 +92,16 @@ public class PathNodeDefaults {
         if (block instanceof LeavesBlock) {
             return PathNodeType.LEAVES;
         }
+
         if (state.isIn(BlockTags.FENCES) || state.isIn(BlockTags.WALLS) || ((block instanceof FenceGateBlock) && !state.get(FenceGateBlock.OPEN))) {
             return PathNodeType.FENCE;
         }
 
         if (fluidState.isIn(FluidTags.WATER)) {
             return PathNodeType.WATER;
+        }
+        }catch(Exception e) {
+        	
         }
 
         return PathNodeType.OPEN;

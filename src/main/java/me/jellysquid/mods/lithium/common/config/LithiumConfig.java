@@ -1,11 +1,7 @@
 package me.jellysquid.mods.lithium.common.config;
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.metadata.CustomValue;
-import net.fabricmc.loader.api.metadata.CustomValue.CvType;
-import net.fabricmc.loader.api.metadata.ModMetadata;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,9 +14,8 @@ import java.util.Set;
 /**
  * Documentation of these options: https://github.com/jellysquid3/lithium-fabric/wiki/Configuration-File
  */
-@SuppressWarnings("CanBeFinal")
 public class LithiumConfig {
-    private static final Logger LOGGER = LogManager.getLogger("LithiumConfig");
+    private static final Logger LOGGER = LogManager.getLogger("RadiumConfig");
 
     private static final String JSON_KEY_LITHIUM_OPTIONS = "lithium:options";
 
@@ -47,7 +42,6 @@ public class LithiumConfig {
         this.addMixinRule("ai.task.replace_streams", true);
 
         this.addMixinRule("alloc", true);
-        this.addMixinRule("alloc.blockstate", true);
         this.addMixinRule("alloc.chunk_random", true);
         this.addMixinRule("alloc.chunk_ticking", true);
         this.addMixinRule("alloc.composter", true);
@@ -63,6 +57,7 @@ public class LithiumConfig {
         this.addMixinRule("block.moving_block_shapes", true);
         this.addMixinRule("block.redstone_wire", true);
 
+        this.addMixinRule("cached_blockpos_iteration", true);
         this.addMixinRule("cached_hashcode", true);
 
         this.addMixinRule("chunk", true);
@@ -88,8 +83,8 @@ public class LithiumConfig {
         this.addMixinRule("entity.collisions.fluid", true);
         this.addMixinRule("entity.collisions.intersection", true);
         this.addMixinRule("entity.collisions.movement", true);
+        this.addMixinRule("entity.collisions.replace_streams", true);
         this.addMixinRule("entity.collisions.suffocation", true);
-        this.addMixinRule("entity.collisions.unpushable_cramming", true);
         this.addMixinRule("entity.data_tracker", true);
         this.addMixinRule("entity.data_tracker.no_locks", true);
         this.addMixinRule("entity.data_tracker.use_arrays", true);
@@ -128,10 +123,10 @@ public class LithiumConfig {
         this.addMixinRule("shapes.precompute_shape_arrays", true);
         this.addMixinRule("shapes.shape_merging", true);
         this.addMixinRule("shapes.specialized_shapes", true);
-
+        
         this.addMixinRule("util", true);
         this.addMixinRule("util.entity_section_position", true);
-
+        
         this.addMixinRule("world", true);
         this.addMixinRule("world.block_entity_retrieval", true);
         this.addMixinRule("world.block_entity_ticking", true);
@@ -144,7 +139,7 @@ public class LithiumConfig {
         this.addMixinRule("world.inline_height", true);
         this.addMixinRule("world.player_chunk_tick", true);
         this.addMixinRule("world.tick_scheduler", false); //removed during 1.18 update
-
+        
         this.addRuleDependency("ai.nearby_entity_tracking", "util", true);
         this.addRuleDependency("ai.nearby_entity_tracking", "util.entity_section_position", true);
         this.addRuleDependency("block.hopper", "ai", true);
@@ -154,9 +149,9 @@ public class LithiumConfig {
 
         this.addRuleDependency("entity.collisions.fluid", "chunk", true);
         this.addRuleDependency("entity.collisions.fluid", "chunk.block_counting", true);
+        
         this.addRuleDependency("entity.collisions.unpushable_cramming", "util", true);
         this.addRuleDependency("entity.collisions.unpushable_cramming", "util.entity_section_position", true);
-
     }
 
     /**
@@ -184,7 +179,7 @@ public class LithiumConfig {
             }
         }
 
-        config.applyModOverrides();
+        //config.applyModOverrides();
 
         // Check dependencies several times, because one iteration may disable a rule required by another rule
         // This terminates because each additional iteration will disable one or more rules, and there is only a finite number of rules
@@ -264,7 +259,7 @@ public class LithiumConfig {
         }
     }
 
-    private void applyModOverrides() {
+    /*private void applyModOverrides() {
         for (ModContainer container : FabricLoader.getInstance().getAllMods()) {
             ModMetadata meta = container.getMetadata();
 
@@ -306,7 +301,7 @@ public class LithiumConfig {
         if (!enabled || option.isEnabled() || option.getDefiningMods().isEmpty()) {
             option.addModOverride(enabled, meta.getId());
         }
-    }
+    }*/
 
     /**
      * Returns the effective option for the specified class name. This traverses the package path of the given mixin
