@@ -1,10 +1,8 @@
 package me.jellysquid.mods.lithium.common.world.interests;
 
-import me.jellysquid.mods.lithium.common.util.Collector;
-
 import java.util.stream.Stream;
 
-public interface RegionBasedStorageSectionAccess<R> {
+public interface RegionBasedStorageSectionExtended<R> {
     /**
      * Fast-path for retrieving all items in a chunk column. This avoids needing to retrieve items for each sub-chunk
      * individually.
@@ -22,5 +20,5 @@ public interface RegionBasedStorageSectionAccess<R> {
      * @param chunkZ The z-coordinate of the chunk column
      * @return False if collection was interrupted by a downstream collector, otherwise true if all items were collected
      */
-    boolean collectWithinChunkColumn(int chunkX, int chunkZ, Collector<R> consumer);
+    Iterable<R> getInChunkColumn(int chunkX, int chunkZ);
 }

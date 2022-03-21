@@ -1,4 +1,4 @@
-package me.jellysquid.mods.lithium.common.world.interests;
+package me.jellysquid.mods.lithium.common.world.interests.types;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.world.chunk.ChunkSection;
