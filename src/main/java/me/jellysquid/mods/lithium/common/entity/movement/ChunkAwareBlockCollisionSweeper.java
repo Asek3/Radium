@@ -115,10 +115,10 @@ public class ChunkAwareBlockCollisionSweeper extends AbstractIterator<VoxelShape
                         }
                     }
                     //Casting to Chunk is not checked, together with other mods this could cause a ClassCastException
-                    //Changed by Radium
-                    BlockView view = this.view.getChunkAsView(this.chunkX, chunkZ);
-                    if(view instanceof Chunk) {
-	                    this.cachedChunk = (Chunk) this.view.getChunkAsView(this.chunkX, this.chunkZ);
+                    //So, I'll check it
+                    BlockView view = this.view.getChunkAsView(this.chunkX, this.chunkZ);
+                    if(view instanceof Chunk chunk) {
+	                    this.cachedChunk = chunk;
 	                    if (this.cachedChunk != null) {
 	                        this.cachedChunkSection = this.cachedChunk.getSectionArray()[this.chunkYIndex];
 	                    }

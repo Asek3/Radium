@@ -18,7 +18,6 @@ public interface RegionBasedStorageSectionExtended<R> {
      *
      * @param chunkX The x-coordinate of the chunk column
      * @param chunkZ The z-coordinate of the chunk column
-     * @return False if collection was interrupted by a downstream collector, otherwise true if all items were collected
      */
     Iterable<R> getInChunkColumn(int chunkX, int chunkZ);
 }

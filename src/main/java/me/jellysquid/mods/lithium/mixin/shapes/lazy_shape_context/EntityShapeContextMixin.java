@@ -59,8 +59,7 @@ public class EntityShapeContextMixin {
 
     @Inject(
             method = "<init>(Lnet/minecraft/entity/Entity;)V",
-            at = @At("RETURN")
-    )
+            at = @At("RETURN"))
     private void initFields(Entity entity, CallbackInfo ci) {
         this.heldItem = null;
         this.walkOnFluidPredicate = null;
@@ -80,7 +79,7 @@ public class EntityShapeContextMixin {
             method = "canWalkOnFluid(Lnet/minecraft/fluid/FluidState;Lnet/minecraft/fluid/FluidState;)Z",
             at = @At("HEAD")
     )
-    public void canWalkOnFluid(FluidState state, FluidState fluid, CallbackInfoReturnable<Boolean> cir) {
+    public void canWalkOnFluid(FluidState state, FluidState fluidState, CallbackInfoReturnable<Boolean> cir) {
         if (this.walkOnFluidPredicate == null) {
             if (this.entity instanceof LivingEntity livingEntity) {
                 this.walkOnFluidPredicate = livingEntity::canWalkOnFluid;

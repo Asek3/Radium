@@ -27,7 +27,7 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
         try {
             this.config = LithiumConfig.load(new File("./config/radium.properties"));
         } catch (Exception e) {
-            throw new RuntimeException("Could not load configuration file for Lithium", e);
+            throw new RuntimeException("Could not load configuration file for Radium", e);
         }
 
         this.logger.info("Loaded configuration file for Radium: {} options available, {} override(s) found",
@@ -43,9 +43,6 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-    	if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.fast_init.PointOfInterestTypeMixin") && FMLLoader.getLoadingModList().getModFileById("morevillagers") != null)
-    		return false;
-    	
         if (!mixinClassName.startsWith(MIXIN_PACKAGE_ROOT)) {
             this.logger.error("Expected mixin '{}' to start with package root '{}', treating as foreign and " +
                     "disabling!", mixinClassName, MIXIN_PACKAGE_ROOT);
@@ -61,6 +58,9 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
 
             return false;
         }
+        
+        if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.fast_init.PointOfInterestTypeMixin") && FMLLoader.getLoadingModList().getModFileById("morevillagers") != null)
+    		return false;
 
         if (option.isOverridden()) {
             String source = "[unknown]";

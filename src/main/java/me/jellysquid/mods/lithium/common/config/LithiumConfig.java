@@ -1,7 +1,6 @@
 package me.jellysquid.mods.lithium.common.config;
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,21 +30,22 @@ public class LithiumConfig {
         this.addMixinRule("ai.nearby_entity_tracking.goals", true);
         this.addMixinRule("ai.pathing", true);
         this.addMixinRule("ai.poi", true);
+        this.addMixinRule("ai.poi.fast_portals", true);
+        this.addMixinRule("ai.poi.poi.tasks", true);
         this.addMixinRule("ai.raid", true);
         this.addMixinRule("ai.sensor", true);
         this.addMixinRule("ai.sensor.secondary_poi", true);
         this.addMixinRule("ai.task", true);
-        this.addMixinRule("ai.task.fast_repetition", false); //removed during 1.18 update
-        this.addMixinRule("ai.task.goat_jump", true);
         this.addMixinRule("ai.task.launch", true);
         this.addMixinRule("ai.task.memory_change_counting", true);
         this.addMixinRule("ai.task.replace_streams", true);
 
         this.addMixinRule("alloc", true);
+        this.addMixinRule("alloc.blockstate", true);
         this.addMixinRule("alloc.chunk_random", true);
         this.addMixinRule("alloc.chunk_ticking", true);
         this.addMixinRule("alloc.composter", true);
-        this.addMixinRule("alloc.deep_passenger", true);
+        this.addMixinRule("alloc.deep_passengers", true);
         this.addMixinRule("alloc.entity_tracker", true);
         this.addMixinRule("alloc.enum_values", true);
         this.addMixinRule("alloc.explosion_behavior", true);
@@ -57,7 +57,6 @@ public class LithiumConfig {
         this.addMixinRule("block.moving_block_shapes", true);
         this.addMixinRule("block.redstone_wire", true);
 
-        this.addMixinRule("cached_blockpos_iteration", true);
         this.addMixinRule("cached_hashcode", true);
 
         this.addMixinRule("chunk", true);
@@ -80,11 +79,10 @@ public class LithiumConfig {
 
         this.addMixinRule("entity", true);
         this.addMixinRule("entity.collisions", true);
-        this.addMixinRule("entity.collisions.fluid", true);
         this.addMixinRule("entity.collisions.intersection", true);
         this.addMixinRule("entity.collisions.movement", true);
-        this.addMixinRule("entity.collisions.replace_streams", true);
         this.addMixinRule("entity.collisions.suffocation", true);
+        this.addMixinRule("entity.collisions.unpushable_cramming", true);
         this.addMixinRule("entity.data_tracker", true);
         this.addMixinRule("entity.data_tracker.no_locks", true);
         this.addMixinRule("entity.data_tracker.use_arrays", true);
@@ -98,14 +96,8 @@ public class LithiumConfig {
         this.addMixinRule("entity.skip_fire_check", true);
 
         this.addMixinRule("gen", true);
-        this.addMixinRule("gen.biome_noise_cache", false); //removed during 1.18 update
         this.addMixinRule("gen.cached_generator_settings", true);
         this.addMixinRule("gen.chunk_region", true);
-        this.addMixinRule("gen.fast_island_noise", false); //removed during 1.18 update
-        this.addMixinRule("gen.fast_layer_sampling", false); //removed during 1.18 update
-        this.addMixinRule("gen.fast_multi_source_biomes", false); //removed during 1.18 update
-        this.addMixinRule("gen.features", false); //removed during 1.18 update
-        this.addMixinRule("gen.perlin_noise", false); //removed during 1.18 update
 
         this.addMixinRule("item", true);
 
@@ -123,10 +115,10 @@ public class LithiumConfig {
         this.addMixinRule("shapes.precompute_shape_arrays", true);
         this.addMixinRule("shapes.shape_merging", true);
         this.addMixinRule("shapes.specialized_shapes", true);
-        
+
         this.addMixinRule("util", true);
         this.addMixinRule("util.entity_section_position", true);
-        
+
         this.addMixinRule("world", true);
         this.addMixinRule("world.block_entity_retrieval", true);
         this.addMixinRule("world.block_entity_ticking", true);
@@ -138,8 +130,8 @@ public class LithiumConfig {
         this.addMixinRule("world.inline_block_access", true);
         this.addMixinRule("world.inline_height", true);
         this.addMixinRule("world.player_chunk_tick", true);
-        this.addMixinRule("world.tick_scheduler", false); //removed during 1.18 update
-        
+        this.addMixinRule("world.tick_scheduler", true);
+
         this.addRuleDependency("ai.nearby_entity_tracking", "util", true);
         this.addRuleDependency("ai.nearby_entity_tracking", "util.entity_section_position", true);
         this.addRuleDependency("block.hopper", "ai", true);
@@ -149,7 +141,7 @@ public class LithiumConfig {
 
         this.addRuleDependency("entity.collisions.fluid", "chunk", true);
         this.addRuleDependency("entity.collisions.fluid", "chunk.block_counting", true);
-        
+
     }
 
     /**
@@ -176,8 +168,6 @@ public class LithiumConfig {
                 LOGGER.warn("Could not write default configuration file", e);
             }
         }
-
-        //config.applyModOverrides();
 
         // Check dependencies several times, because one iteration may disable a rule required by another rule
         // This terminates because each additional iteration will disable one or more rules, and there is only a finite number of rules
@@ -257,6 +247,8 @@ public class LithiumConfig {
         }
     }
 
+    // Overriding Mods on Forge? No.
+    
     /*private void applyModOverrides() {
         for (ModContainer container : FabricLoader.getInstance().getAllMods()) {
             ModMetadata meta = container.getMetadata();
@@ -357,7 +349,7 @@ public class LithiumConfig {
         }
 
         try (Writer writer = new FileWriter(file)) {
-            writer.write("# This is the configuration file for Lithium.\n");
+            writer.write("# This is the configuration file for Radium.\n");
             writer.write("# This file exists for debugging purposes and should not be configured otherwise.\n");
             writer.write("#\n");
             writer.write("# You can find information on editing this file and all the available options here:\n");

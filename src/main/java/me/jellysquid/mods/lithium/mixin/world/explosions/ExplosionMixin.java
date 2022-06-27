@@ -2,6 +2,7 @@ package me.jellysquid.mods.lithium.mixin.world.explosions;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.jellysquid.mods.lithium.common.util.Pos;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -9,11 +10,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.dimension.DimensionTypes;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.spongepowered.asm.mixin.Final;
@@ -22,9 +25,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.*;
-
-import static net.minecraft.util.math.MathHelper.floor;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
 
 /**
  * Optimizations for Explosions: Reduce allocations and getChunk/getBlockState calls
@@ -64,9 +67,6 @@ public abstract class ExplosionMixin {
     // The cached mutable block position used during block traversal.
     private final BlockPos.Mutable cachedPos = new BlockPos.Mutable();
 
-    //cached block and blast resistance
-    private final HashMap<BlockPos,Pair<Float,BlockState>> blockAndBlastResCache = new HashMap<>();
-
     // The chunk coordinate of the most recently stepped through block.
     private int prevChunkX = Integer.MIN_VALUE;
     private int prevChunkZ = Integer.MIN_VALUE;
@@ -82,7 +82,6 @@ public abstract class ExplosionMixin {
 
     private int minY, maxY;
 
-
     @Inject(
             method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/damage/DamageSource;Lnet/minecraft/world/explosion/ExplosionBehavior;DDDFZLnet/minecraft/world/explosion/Explosion$DestructionType;)V",
             at = @At("TAIL")
@@ -92,7 +91,7 @@ public abstract class ExplosionMixin {
         this.maxY = this.world.getTopY();
 
         boolean explodeAir = this.createFire; // air blocks are only relevant for the explosion when fire should be created inside them
-        if (!explodeAir && this.world != null && this.world.getDimension().hasEnderDragonFight()) {
+        if (!explodeAir && this.world.getRegistryKey() == World.END && this.world.getDimensionEntry().matchesKey(DimensionTypes.THE_END)) {
             float overestimatedExplosionRange = (8 + (int) (6f * this.power));
             int endPortalX = 0;
             int endPortalZ = 0;
@@ -124,8 +123,8 @@ public abstract class ExplosionMixin {
      * @author JellySquid
      */
     @Redirect(method = "collectBlocksAndDamageEntities()V",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;addAll(Ljava/util/Collection;)Z"))
-    public boolean collectBlocks(List<BlockPos> affectedBlocks, Collection<BlockPos> collection) {
+            at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;addAll(Ljava/util/Collection;)Z", remap = false))
+    public boolean collectBlocks(ObjectArrayList<BlockPos> affectedBlocks, Collection<BlockPos> collection) {
         // Using integer encoding for the block positions provides a massive speedup and prevents us from needing to
         // allocate a block position for every step we make along each ray, eliminating essentially all the memory
         // allocations of this function. The overhead of packing block positions into integer format is negligible
@@ -155,6 +154,7 @@ public abstract class ExplosionMixin {
                 }
             }
         }
+
         // We can now iterate back over the set of positions we modified and re-build BlockPos objects from them
         // This will only allocate as many objects as there are in the set, where otherwise we would allocate them
         // each step of a every ray.
@@ -191,9 +191,9 @@ public abstract class ExplosionMixin {
 
         // Step through the ray until it is finally stopped
         while (strength > 0.0F) {
-            int blockX = floor(stepX);
-            int blockY = floor(stepY);
-            int blockZ = floor(stepZ);
+            int blockX = MathHelper.floor(stepX);
+            int blockY = MathHelper.floor(stepY);
+            int blockZ = MathHelper.floor(stepZ);
 
             float resistance;
 
@@ -237,38 +237,15 @@ public abstract class ExplosionMixin {
      */
     private float traverseBlock(float strength, int blockX, int blockY, int blockZ, LongOpenHashSet touched) {
         BlockPos pos = this.cachedPos.set(blockX, blockY, blockZ);
-        Pair<Float,BlockState> blockAndBlastRes = this.blockAndBlastResCache.get(pos);
-        //test if the block is cached
-        if(blockAndBlastRes==null) {
-            //compute values and cache
-            blockAndBlastRes = getBlockAndBlastRes(blockX,blockY,blockZ);
-            this.blockAndBlastResCache.put(pos,blockAndBlastRes);
-        }
-        // Check if this ray is still strong enough to break blocks if not out of bound, and if so, add this position to the set
-        // of positions to destroy
-        if(blockAndBlastRes.getRight()!=null)
-        {
-            float reducedStrength = strength - blockAndBlastRes.getLeft();
-            if (reducedStrength > 0.0F && (this.explodeAirBlocks || !blockAndBlastRes.getRight().isAir())) {
-                if (this.behavior.canDestroyBlock((Explosion) (Object) this, this.world, pos, blockAndBlastRes.getRight(), reducedStrength)) {
-                    touched.add(pos.asLong());
-                }
-            }
-        }
-        return blockAndBlastRes.getLeft();
-    }
-    private Pair<Float,BlockState> getBlockAndBlastRes(int blockX, int blockY, int blockZ) {
-        Pair<Float,BlockState> result= new Pair(0.0,null);
-        BlockPos pos = this.cachedPos.set(blockX, blockY, blockZ);
+
         // Early-exit if the y-coordinate is out of bounds.
         if (this.world.isOutOfHeightLimit(blockY)) {
             Optional<Float> blastResistance = this.behavior.getBlastResistance((Explosion) (Object) this, this.world, pos, Blocks.AIR.getDefaultState(), Fluids.EMPTY.getDefaultState());
             //noinspection OptionalIsPresent
             if (blastResistance.isPresent()) {
-                result.setLeft((blastResistance.get() + 0.3F) * 0.3F);
-                return result;
+                return (blastResistance.get() + 0.3F) * 0.3F;
             }
-            return result;
+            return 0.0F;
         }
 
 
@@ -321,8 +298,17 @@ public abstract class ExplosionMixin {
         if (blastResistance.isPresent()) {
             totalResistance = (blastResistance.get() + 0.3F) * 0.3F;
         }
-        result.setLeft(totalResistance);
-        result.setRight(blockState);
-        return result;
+
+        // Check if this ray is still strong enough to break blocks, and if so, add this position to the set
+        // of positions to destroy
+        float reducedStrength = strength - totalResistance;
+        if (reducedStrength > 0.0F && (this.explodeAirBlocks || !blockState.isAir())) {
+            if (this.behavior.canDestroyBlock((Explosion) (Object) this, this.world, pos, blockState, reducedStrength)) {
+                touched.add(pos.asLong());
+            }
+        }
+
+        return totalResistance;
     }
+
 }

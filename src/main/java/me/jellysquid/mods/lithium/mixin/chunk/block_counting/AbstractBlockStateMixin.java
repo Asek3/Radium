@@ -20,7 +20,7 @@ public class AbstractBlockStateMixin implements BlockStateFlagHolder {
     }
 
     private void initFlags() {
-    	TrackedBlockStatePredicate.FULLY_INITIALIZED.set(true);
+        TrackedBlockStatePredicate.FULLY_INITIALIZED.set(true);
 
         int flags = 0;
 

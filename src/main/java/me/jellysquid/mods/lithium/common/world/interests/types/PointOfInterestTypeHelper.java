@@ -21,5 +21,4 @@ public class PointOfInterestTypeHelper {
     public static boolean shouldScan(ChunkSection section) {
         return section != null && POI_BLOCKSTATE_PREDICATE != null ? section.hasAny(POI_BLOCKSTATE_PREDICATE) : false;
     }
-
 }

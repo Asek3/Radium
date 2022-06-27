@@ -8,6 +8,7 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 public class PushableEntityClassGroup {
 
@@ -27,13 +28,13 @@ public class PushableEntityClassGroup {
     public static final EntityClassGroup MAYBE_PUSHABLE;
 
     static {
-        String remapped_isClimbing = "m_6147_";
-        String remapped_isPushable = "m_6094_";
+    	String remapped_isClimbing = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_6147_").getName();
+    	String remapped_isPushable = ObfuscationReflectionHelper.findMethod(Entity.class, "m_6094_").getName();
         CACHABLE_UNPUSHABILITY = new EntityClassGroup(
                 (Class<?> entityClass) -> {
                     if (LivingEntity.class.isAssignableFrom(entityClass) && !PlayerEntity.class.isAssignableFrom(entityClass)) {
-                        if (!ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, LivingEntity.class, true, remapped_isPushable)) {
-                            if (!ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, LivingEntity.class, true, remapped_isClimbing)) {
+                        if (!ReflectionUtil.hasMethodOverride(entityClass, LivingEntity.class, true, remapped_isPushable)) {
+                            if (!ReflectionUtil.hasMethodOverride(entityClass, LivingEntity.class, true, remapped_isClimbing)) {
                                 return true;
                             }
                         }
@@ -42,15 +43,15 @@ public class PushableEntityClassGroup {
                 });
         MAYBE_PUSHABLE = new EntityClassGroup(
                 (Class<?> entityClass) -> {
-                    if (ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, Entity.class, true, remapped_isPushable)) {
+                    if (ReflectionUtil.hasMethodOverride(entityClass, Entity.class, true, remapped_isPushable)) {
                         if (EnderDragonEntity.class.isAssignableFrom(entityClass)) {
                             return false;
                         }
                         if (ArmorStandEntity.class.isAssignableFrom(entityClass)) {
-                            return ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, ArmorStandEntity.class, true, remapped_isPushable);
+                            return ReflectionUtil.hasMethodOverride(entityClass, ArmorStandEntity.class, true, remapped_isPushable);
                         }
                         if (BatEntity.class.isAssignableFrom(entityClass)) {
-                            return ReflectionUtil.isMethodFromSuperclassOverwritten(entityClass, BatEntity.class, true, remapped_isPushable);
+                            return ReflectionUtil.hasMethodOverride(entityClass, BatEntity.class, true, remapped_isPushable);
                         }
                         return true;
                     }

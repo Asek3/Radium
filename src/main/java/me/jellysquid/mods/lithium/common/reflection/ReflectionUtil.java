@@ -1,14 +1,13 @@
 package me.jellysquid.mods.lithium.common.reflection;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ReflectionUtil {
-    public static boolean isMethodFromSuperclassOverwritten(Class<?> clazz, Class<?> superclass, boolean fallbackResult, String methodName, Class<?>... methodArgs) {
+    public static boolean hasMethodOverride(Class<?> clazz, Class<?> superclass, boolean fallbackResult, String methodName, Class<?>... methodArgs) {
         while (clazz != null && clazz != superclass && superclass.isAssignableFrom(clazz)) {
             try {
                 clazz.getDeclaredMethod(methodName, methodArgs);

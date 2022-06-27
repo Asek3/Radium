@@ -1,13 +1,14 @@
 plugins {
-	id 'dev.architectury.loom' version '0.10.0-SNAPSHOT'
+	id 'dev.architectury.loom' version '0.11.0-SNAPSHOT'
 	id 'maven-publish'
+	id 'org.ajoberstar.grgit' version '4.1.0'
 }
 
 loom {
     silentMojangMappingsLicense()
 	forge {
 		mixinConfigs = [
-				"radium.mixins.json"
+			"radium.mixins.json"
 		]
 	}
 }
@@ -20,22 +21,21 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-	
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 }
 
 processResources {
 	inputs.property "version", project.version
 
 	filesMatching("META-INF/mods.toml") {
-		expand "version": project.version
-	}
+        expand "version": project.version
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {

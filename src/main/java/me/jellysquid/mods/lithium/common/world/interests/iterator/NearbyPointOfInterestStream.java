@@ -1,3 +1,4 @@
+
 package me.jellysquid.mods.lithium.common.world.interests.iterator;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -8,6 +9,7 @@ import me.jellysquid.mods.lithium.common.world.interests.RegionBasedStorageSecti
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestSet;
 import net.minecraft.world.poi.PointOfInterestStorage;
@@ -30,7 +32,7 @@ import java.util.function.Predicate;
 public class NearbyPointOfInterestStream extends Spliterators.AbstractSpliterator<PointOfInterest> {
     private final RegionBasedStorageSectionExtended<PointOfInterestSet> storage;
 
-    private final Predicate<PointOfInterestType> typeSelector;
+    private final Predicate<RegistryEntry<PointOfInterestType>> typeSelector;
     private final PointOfInterestStorage.OccupationStatus occupationStatus;
 
     private final LongArrayList chunksSortedByMinDistance;
@@ -44,7 +46,7 @@ public class NearbyPointOfInterestStream extends Spliterators.AbstractSpliterato
     private int pointIndex;
     private final Comparator<? super SortedPointOfInterest> pointComparator;
 
-    public NearbyPointOfInterestStream(Predicate<PointOfInterestType> typeSelector,
+    public NearbyPointOfInterestStream(Predicate<RegistryEntry<PointOfInterestType>> typeSelector,
                                        PointOfInterestStorage.OccupationStatus status,
                                        boolean useSquareDistanceLimit,
                                        boolean preferNegativeY,
@@ -203,7 +205,7 @@ public class NearbyPointOfInterestStream extends Spliterators.AbstractSpliterato
             }
         }
 
-        // Return the first point in the chunk
+        // Return the first valid point
         return this.tryAdvancePoint(action);
         //Returns true when progress was made by consuming an element
         //Returns false when no progress was made because no more elements exist.
@@ -211,11 +213,10 @@ public class NearbyPointOfInterestStream extends Spliterators.AbstractSpliterato
 
 
     private boolean tryAdvancePoint(Consumer<? super PointOfInterest> action) {
-        if (this.pointIndex < this.points.size() ||
-                this.chunkIndex < this.chunksSortedByMinDistance.size()) {
+        while (this.pointIndex < this.points.size()) {
             SortedPointOfInterest next = this.points.get(this.pointIndex);
 
-            //Only consume points if we are sure that there are no closer points. Otherwise scan more chunks
+            //Only consume points if we are sure that there are no closer (or same distance) points to be scanned. Otherwise scan more chunks
             if (next.distanceSq() >= this.currChunkMinDistanceSq) {
                 return false;
             }
@@ -223,10 +224,11 @@ public class NearbyPointOfInterestStream extends Spliterators.AbstractSpliterato
 
             if (this.afterSortingPredicate == null || this.afterSortingPredicate.test(next.poi())) {
                 action.accept(next.poi());
-                return true; //Returns true if progress was made
+                return true; //Progress was made
             }
+            //Continue with the other points when condition is not met
         }
-        return false;
+        return false; //No more points. Scan more chunks
     }
 
 }

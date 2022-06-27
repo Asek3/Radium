@@ -7,10 +7,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 @Mod(LithiumMod.MODID)
 public class LithiumMod {
-	
-	public static final String MODID = "radium";
-	
     public static LithiumConfig CONFIG;
+    
+    public static final String MODID = "radium";
 
     public LithiumMod() {
         MinecraftForge.EVENT_BUS.addListener(this::onInitialize);

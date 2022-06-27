@@ -35,7 +35,8 @@ public class BrainMixin implements MemoryModificationCounter {
     public long getModCount() {
         return memoryModCount;
     }
-    
+
+
     /**
      * Fix mod count being reset when villager loses profession due to disappearing workstation.
      * Mod count being reset can lead to tasks not running even though they should be!
