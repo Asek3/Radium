@@ -43,7 +43,7 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-    	if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.fast_init.PointOfInterestTypeMixin") && FMLLoader.getLoadingModList().getModFileById("morevillagers") != null)
+    	if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.PointOfInterestTypeMixin") && (FMLLoader.getLoadingModList().getModFileById("morevillagers") != null || FMLLoader.getLoadingModList().getModFileById("productivebees") != null))
     		return false;
     	
         if (!mixinClassName.startsWith(MIXIN_PACKAGE_ROOT)) {
