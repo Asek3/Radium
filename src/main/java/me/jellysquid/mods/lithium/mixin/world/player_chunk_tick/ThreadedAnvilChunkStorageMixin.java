@@ -138,7 +138,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     }
 
     protected void startWatchingChunk(ServerPlayerEntity player, int x, int z) {
-    	ForgeEventFactory.fireChunkWatch(true, player, new ChunkPos(x, z), this.world);
+    	ChunkPos chunkPos = new ChunkPos(x, z);
+    	ForgeEventFactory.fireChunkWatch(player, player.getWorld().getWorldChunk(chunkPos.getStartPos()), this.world);
         ChunkHolder holder = this.getChunkHolder(ChunkPos.toLong(x, z));
 
         if (holder != null) {
@@ -152,8 +153,9 @@ public abstract class ThreadedAnvilChunkStorageMixin {
 
     protected void stopWatchingChunk(ServerPlayerEntity player, int x, int z) {
     	ChunkPos chunkPos = new ChunkPos(x, z);
-        ForgeEventFactory.fireChunkWatch(false, player, chunkPos, this.world);
         player.sendUnloadChunkPacket(chunkPos);
+        
+        ForgeEventFactory.fireChunkWatch(player, player.getWorld().getWorldChunk(chunkPos.getStartPos()), this.world);
     }
 
     @Shadow
