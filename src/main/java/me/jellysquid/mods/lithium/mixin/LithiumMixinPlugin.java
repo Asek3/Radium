@@ -63,7 +63,7 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
         if((mixinClassName.contains("shapes") || mixinClassName.contains("sine_lut")) && !LoadingModList.get().getErrors().isEmpty())
         	return false;
         
-        if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.fast_init.PointOfInterestTypeMixin") && FMLLoader.getLoadingModList().getModFileById("morevillagers") != null)
+        if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.fast_init.PointOfInterestTypeMixin") && (FMLLoader.getLoadingModList().getModFileById("morevillagers") != null || FMLLoader.getLoadingModList().getModFileById("productivebees") != null))
     		return false;
 
         if (option.isOverridden()) {
