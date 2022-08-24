@@ -4,6 +4,7 @@ import me.jellysquid.mods.lithium.common.LithiumMod;
 import me.jellysquid.mods.lithium.common.config.LithiumConfig;
 import me.jellysquid.mods.lithium.common.config.Option;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LoadingModList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,6 +59,9 @@ public class LithiumMixinPlugin implements IMixinConfigPlugin {
 
             return false;
         }
+        
+        if((mixinClassName.contains("shapes") || mixinClassName.contains("sine_lut")) && !LoadingModList.get().getErrors().isEmpty())
+        	return false;
         
         if(mixinClassName.startsWith(MIXIN_PACKAGE_ROOT + "ai.poi.fast_init.PointOfInterestTypeMixin") && FMLLoader.getLoadingModList().getModFileById("morevillagers") != null)
     		return false;
